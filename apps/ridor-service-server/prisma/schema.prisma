@@ -1,0 +1,76 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Ride {
+  createdAt       DateTime            @default(now())
+  dropoffLocation Json?
+  fare            Float?
+  id              String              @id @default(cuid())
+  payments        Payment[]
+  pickupLocation  Json?
+  rideStatus      EnumRideRideStatus?
+  updatedAt       DateTime            @updatedAt
+  user            User?               @relation(fields: [userId], references: [id])
+  userId          String?
+}
+
+model Vehicle {
+  createdAt    DateTime @default(now())
+  id           String   @id @default(cuid())
+  licensePlate String?
+  make         String?
+  model        String?
+  updatedAt    DateTime @updatedAt
+  user         User?    @relation(fields: [userId], references: [id])
+  userId       String?
+  year         Int?
+}
+
+model Payment {
+  amount    Float?
+  createdAt DateTime           @default(now())
+  id        String             @id @default(cuid())
+  method    EnumPaymentMethod?
+  ride      Ride?              @relation(fields: [rideId], references: [id])
+  rideId    String?
+  status    EnumPaymentStatus?
+  updatedAt DateTime           @updatedAt
+}
+
+model User {
+  createdAt   DateTime          @default(now())
+  email       String?           @unique
+  firstName   String?
+  id          String            @id @default(cuid())
+  lastName    String?
+  password    String
+  phoneNumber String?
+  rides       Ride[]
+  roles       Json
+  updatedAt   DateTime          @updatedAt
+  username    String            @unique
+  userType    EnumUserUserType?
+  vehicles    Vehicle[]
+}
+
+enum EnumRideRideStatus {
+  Option1
+}
+
+enum EnumPaymentMethod {
+  Option1
+}
+
+enum EnumPaymentStatus {
+  Option1
+}
+
+enum EnumUserUserType {
+  Option1
+}
